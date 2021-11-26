@@ -2,25 +2,39 @@ package OOP2.Solution;
 
 import OOP2.Provided.*;
 
-import java.util.Collection;
-import java.util.TreeSet;
-import java.util.Set;
-import java.util.Comparator;
-//import java.util.stream.Collectors;
+import java.util.*;
 
-public class PersonImpl implements Person, Comparable<PersonImpl> {
+class CompareStatusByRecent implements Comparator<Status> {
+	@Override
+	public int compare(Status s1, Status s2) {
+		return s1.getId() - s2.getId();
+	}
+}
 
-	private Integer id = 0;
-	private String name = "";
+class CompareStatusByLikesThenRecent implements Comparator<Status> {
+	@Override
+	public int compare(Status s1, Status s2) {
+		int likes = s1.getLikesCount() - s2.getLikesCount();
+		if(likes != 0) {
+			return likes;
+		}
+		else {
+			return s1.getId() - s2.getId();
+		}
+	}
+}
+
+public class PersonImpl implements Comparable<Person>, Person {
+
+	private Integer id;
+	private String name;
 	private Integer num_of_statuses = 0;
-	private Set<Status> statuses;
-	private Set<Person> friends;
+	private Set<Status> statuses = new TreeSet<>();
+	private Set<Person> friends = new TreeSet<>();
 
 	public PersonImpl(Integer id, String name) {
 		this.id = id;
 		this.name = name;
-		this.statuses = new TreeSet<>();
-		this.friends = new TreeSet<>();
 	}
 	@Override
 	public Integer getId() {
@@ -52,36 +66,26 @@ public class PersonImpl implements Person, Comparable<PersonImpl> {
 	}
 	@Override
 	public Collection<Person> getFriends() {
-		return friends;
+		return this.friends;
 	}
 	@Override
 	public Iterable<Status> getStatusesRecent()
 	{
 		// TODO: maybe need to change the order here
-		Comparator<Status> CompareStatusByRecent = (s1, s2) -> s1.getId() - s2.getId();
-		(this.statuses.stream()
-				.sorted(CompareStatusByRecent)
-				.collect(Collectors.toList())).iterator();
+		List<Status> status_list = new ArrayList<>(this.statuses);
+		Collections.sort(status_list, new CompareStatusByRecent());
+		return status_list;
 	}
 	@Override
 	public Iterable<Status> getStatusesPopular()
 	{
 		// TODO: maybe need to change the order here
-		Comparator<Status> CompareStatusByLikesThenRecent = (s1, s2) ->
-				(Integer likes = s1.getLikesCount() - s2.getLikesCount();
-		if(likes != 0) {
-			return likes;
-		}
-		else {
-			return s1.getId() - s2.getId();
-		});
-
-		(this.statuses.stream()
-				.sorted(CompareStatusByLikesThenRecent)
-				.collect(Collectors.toList())).iterator();
+		List<Status> status_list = new ArrayList<>(this.statuses);
+		Collections.sort(status_list, new CompareStatusByLikesThenRecent());
+		return status_list;
 	}
 	@Override
-	public int compareTo(PersonImpl p) {
+	public int compareTo(Person p) {
 		return this.id - p.getId();
 	}
 	protected boolean eq(Object o)
@@ -98,9 +102,6 @@ public class PersonImpl implements Person, Comparable<PersonImpl> {
 	@Override
 	public int hashCode() {
 		return this.id;
-	}
-	public static void main (String[] args) {
-		System.out.println("Hello World!");
 	}
 }
 

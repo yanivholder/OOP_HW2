@@ -10,55 +10,41 @@ public class StatusImpl implements Status {
 	private Integer id;
 	private String content;
 	private Person publisher;
-	private Set<Person> likers = new HashSet<Person> ();
+	private Set<Integer> likers = new HashSet<>();
 
-
-	protected boolean eq(StatusImpl s) {
-		if (!(s instanceof StatusImpl)) return false;
-		StatusImpl other = (StatusImpl)s;
-		return publisher.equals(other.publisher) &&
-				id.equals(other.id);
-	}
-	@Override
-	public boolean equals(StatusImpl s) {
-		return (this.eq(s) && ((StatusImpl)s).eq(this));
-	}
-
-	/*
-	 * A constructor that receives the status publisher, the text of the status
-	 *  and the id of the status.
-	 */
 	public StatusImpl(Person publisher, String content, Integer id) {
-		id = id; content = content; publisher = publisher;
+		this.id = id;
+		this.content = content;
+		this.publisher = publisher;
 	}
 
 	@Override
 	public Integer getId() {
-		return new Integer(id);
+		return new Integer(this.id);
 	}
 
 	@Override
 	public String getContent() {
-		return new String(content);
+		return new String(this.content);
 	}
 
 	@Override
 	public Person getPublisher() {
-		return new Person(publisher);
+		return new PersonImpl(this.publisher.getId(), this.publisher.getName());
 	}
 
 	@Override
 	public void like(Person person) {
-		likers.add(person);
+		this.likers.add(person.getId());
 	}
 
 	@Override
 	public void unlike(Person person) {
-		likers.remove(person);
+		this.likers.remove(person.getId());
 	}
 
 	@Override
 	public Integer getLikesCount() {
-		return new Integer(likers.size());
+		return this.likers.size();
 	}
 }
