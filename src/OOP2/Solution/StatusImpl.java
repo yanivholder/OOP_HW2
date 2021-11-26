@@ -20,17 +20,17 @@ public class StatusImpl implements Status {
 
 	@Override
 	public Integer getId() {
-		return new Integer(this.id);
+		return this.id;
 	}
 
 	@Override
 	public String getContent() {
-		return new String(this.content);
+		return this.content;
 	}
 
 	@Override
 	public Person getPublisher() {
-		return new PersonImpl(this.publisher.getId(), this.publisher.getName());
+		return this.publisher;
 	}
 
 	@Override

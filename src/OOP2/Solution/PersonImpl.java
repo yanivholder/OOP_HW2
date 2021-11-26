@@ -4,33 +4,32 @@ import OOP2.Provided.*;
 
 import java.util.*;
 
-class CompareStatusByRecent implements Comparator<Status> {
-	@Override
-	public int compare(Status s1, Status s2) {
-		return s1.getId() - s2.getId();
-	}
-}
-
-class CompareStatusByLikesThenRecent implements Comparator<Status> {
-	@Override
-	public int compare(Status s1, Status s2) {
-		int likes = s1.getLikesCount() - s2.getLikesCount();
-		if(likes != 0) {
-			return likes;
-		}
-		else {
-			return s1.getId() - s2.getId();
-		}
-	}
-}
-
 public class PersonImpl implements Comparable<Person>, Person {
 
 	private Integer id;
 	private String name;
-	private Integer num_of_statuses = 0;
-	private Set<Status> statuses = new TreeSet<>();
-	private Set<Person> friends = new TreeSet<>();
+	private List<Status> statuses = new ArrayList<>();
+	private Set<Person> friends = new HashSet<>();
+
+	public static class CompareStatusByRecent implements Comparator<Status> {
+		@Override
+		public int compare(Status s1, Status s2) {
+			return s2.getId() - s1.getId();
+		}
+	}
+
+	public static class CompareStatusByLikesThenRecent implements Comparator<Status> {
+		@Override
+		public int compare(Status s1, Status s2) {
+			int likes = s2.getLikesCount() - s1.getLikesCount();
+			if(likes != 0) {
+				return likes;
+			}
+			else {
+				return s2.getId() - s1.getId();
+			}
+		}
+	}
 
 	public PersonImpl(Integer id, String name) {
 		this.id = id;
@@ -47,14 +46,13 @@ public class PersonImpl implements Comparable<Person>, Person {
 	@Override
 	public Status postStatus(String content)
 	{
-		Status new_status = new StatusImpl(this, content, this.num_of_statuses);
-		this.num_of_statuses++;
+		Status new_status = new StatusImpl(this, content, this.statuses.size());
 		statuses.add(new_status);
 		return new_status;
 	}
 	@Override
 	public void addFriend(Person p) throws SamePersonException, ConnectionAlreadyExistException {
-		if(p.getId() == this.id)
+		if(p.getId().equals(this.id))
 		{
 			throw new SamePersonException();
 		}
@@ -71,18 +69,14 @@ public class PersonImpl implements Comparable<Person>, Person {
 	@Override
 	public Iterable<Status> getStatusesRecent()
 	{
-		// TODO: maybe need to change the order here
-		List<Status> status_list = new ArrayList<>(this.statuses);
-		Collections.sort(status_list, new CompareStatusByRecent());
-		return status_list;
+		this.statuses.sort(new CompareStatusByRecent());
+		return this.statuses;
 	}
 	@Override
 	public Iterable<Status> getStatusesPopular()
 	{
-		// TODO: maybe need to change the order here
-		List<Status> status_list = new ArrayList<>(this.statuses);
-		Collections.sort(status_list, new CompareStatusByLikesThenRecent());
-		return status_list;
+		this.statuses.sort(new CompareStatusByLikesThenRecent());
+		return this.statuses;
 	}
 	@Override
 	public int compareTo(Person p) {
@@ -93,7 +87,7 @@ public class PersonImpl implements Comparable<Person>, Person {
 		if(!(o instanceof PersonImpl)) {
 			return false;
 		}
-		return ((PersonImpl)o).id == this.id;
+		return ((PersonImpl)o).id.equals(this.id);
 	}
 	@Override
 	public boolean equals(Object o) {
