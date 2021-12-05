@@ -98,8 +98,7 @@ public class FaceOOPImpl implements FaceOOP, Iterable<Person> {
 	}
     @Override
     public Iterator<Person> iterator() {
-        // TODO: earse the comment
-//        this.users.sort(new ComparePersonsById());
+        this.users.sort(new ComparePersonsById());
         return this.users.iterator();
     }
     // A function to create a collection with all of p's friends statuses
@@ -117,8 +116,7 @@ public class FaceOOPImpl implements FaceOOP, Iterable<Person> {
         if(!this.users.contains(p))
             throw new PersonNotInSystemException();
         List<Status> p_friends_statuses = CreateFriendStatusesCollection(p);
-        // TODO: earse the comment
-//        p_friends_statuses.sort(new ComparePersonsByRecent());
+        p_friends_statuses.sort(new CompareStatusByRecent());
         return new StatusIteratorImpl(p_friends_statuses.iterator());
     }
     @Override
@@ -126,8 +124,7 @@ public class FaceOOPImpl implements FaceOOP, Iterable<Person> {
         if(!this.users.contains(p))
             throw new PersonNotInSystemException();
         List<Status> p_friends_statuses = CreateFriendStatusesCollection(p);
-        // TODO: earse the comment
-//        p_friends_statuses.sort(new ComparePersonsByPopular());
+        p_friends_statuses.sort(new CompareStatusByPopular());
         return new StatusIteratorImpl(p_friends_statuses.iterator());
     }
 

@@ -47,4 +47,14 @@ public class StatusImpl implements Status {
 	public Integer getLikesCount() {
 		return this.likers.size();
 	}
+
+	protected boolean eq(Object o) {
+		if (!(o instanceof StatusImpl)) return false;
+		return publisher.equals(((StatusImpl)o).publisher) &&
+				id.equals(((StatusImpl)o).id);
+	}
+	@Override
+	public boolean equals(Object o) {
+		return (this.eq(o) && ((StatusImpl)o).eq(this));
+	}
 }
