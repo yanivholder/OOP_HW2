@@ -92,8 +92,10 @@ public class FaceOOPImpl implements FaceOOP, Iterable<Person> {
 			throw new PersonNotInSystemException();
 		}
 		else {
-			p1.addFriend(p2);
-			p2.addFriend(p1);
+            users.get(users.indexOf(p1)).addFriend(p2);
+            users.get(users.indexOf(p2)).addFriend(p1);
+//			p1.addFriend(p2);
+//			p2.addFriend(p1);
 		}
 	}
     @Override
@@ -128,12 +130,14 @@ public class FaceOOPImpl implements FaceOOP, Iterable<Person> {
         return new StatusIteratorImpl(p_friends_statuses.iterator());
     }
 
-    public Integer rank(Person source, Person target) throws PersonNotInSystemException, ConnectionDoesNotExistException {
+    public Integer rank(Person source_o, Person target_o) throws PersonNotInSystemException, ConnectionDoesNotExistException {
 
-        if(!this.users.contains(source) || !this.users.contains(target))
+        if(!this.users.contains(source_o) || !this.users.contains(target_o))
             throw new PersonNotInSystemException();
 
-        //
+        Person source = users.get(users.indexOf(source_o));
+        Person target = users.get(users.indexOf(target_o));
+
         Queue<Person> q = new LinkedList<>();
         Hashtable<Integer, Boolean> visited = new Hashtable<>();
         Hashtable<Integer, Integer> d = new Hashtable<>();
@@ -154,12 +158,13 @@ public class FaceOOPImpl implements FaceOOP, Iterable<Person> {
         }
 
         while (!q.isEmpty()) {
-            Person u = q.poll();
+            Person i = q.poll();
+            Person u = users.get(users.indexOf(i));
 
             for (Person temp : u.getFriends()) {
                 if (visited.get(temp.getId()) == Boolean.FALSE){
                     visited.put(temp.getId(), Boolean.TRUE);
-                    d.put(temp.getId(), d.get(u.getId()) + 1);
+                    d.put(temp.getId(), Math.min(d.get(u.getId()) + 1, d.get(temp.getId())));
                     q.add(temp);
                 }
             }
@@ -170,6 +175,7 @@ public class FaceOOPImpl implements FaceOOP, Iterable<Person> {
             return d.get(target.getId());
         }
     }
+
 
 
 
